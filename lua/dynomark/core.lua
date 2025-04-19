@@ -165,10 +165,11 @@ local function execute_dynomark_query(query)
     end
 
     local result = ""
-
+    local subQuery = string.gsub(query, "FROM \"(.*)\"", "FROM \"$ZK_NOTEBOOK_DIR/%1\"") 
+    
     -- 2>&1 to redirect errors from stderr to stdout, because io.popen can't read stderr for some reason
     if not is_windows then
-        local handle = io.popen("cd $ZK_NOTEBOOK_DIR && " .. dynomark_bin .. " --query '" .. query .. "' 2>&1")
+        local handle = io.popen(.. dynomark_bin .. " --query '" .. subQuery .. "' 2>&1")
         if not handle then
             vim.notify("Failed to execute dynomark command", vim.log.levels.ERROR)
             return ""
@@ -177,7 +178,7 @@ local function execute_dynomark_query(query)
         result = handle:read("*a")
         handle:close()
     else
-        result = vim.fn.system(dynomark_bin .. " --query '" .. query .. "' 2>&1")
+        result = vim.fn.system(dynomark_bin .. " --query '" .. subQuery .. "' 2>&1")
     end
 
     return result:gsub("^%s*(.-)%s*$", "%1") -- Trim whitespace
