@@ -169,7 +169,7 @@ local function execute_dynomark_query(query)
     
     -- 2>&1 to redirect errors from stderr to stdout, because io.popen can't read stderr for some reason
     if not is_windows then
-        local handle = io.popen(.. dynomark_bin .. " --query '" .. subQuery .. "' 2>&1")
+        local handle = io.popen(dynomark_bin .. " --query '" .. subQuery .. "' 2>&1")
         if not handle then
             vim.notify("Failed to execute dynomark command", vim.log.levels.ERROR)
             return ""
